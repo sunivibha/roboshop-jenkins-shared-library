@@ -1,7 +1,28 @@
-def info(message) {
-    echo "INFO: ${message}"
-}
+def call() {
+    pipeline{
+        agent any
 
-def warning(message) {
-    echo "WARNING: ${message}"
+        stages {
+
+            stage('Code Quality') {
+                steps {
+                    echo 'Code Quality'
+                }
+            }
+
+            stage('Test Cases') {
+                steps {
+                    echo 'Test Cases'
+                }
+            }
+
+            stage('Publish A Release') {
+                steps {
+                    echo 'Publish A Release'
+                }
+            }
+
+        }
+
+    }
 }
