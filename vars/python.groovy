@@ -1,24 +1,13 @@
-pipeline {
-    agent any
-
-    stages {
-
-        stage('Code Quality') {
-            steps {
-                echo 'Code Quality'
-            }
-        }
-
-        stage('Test Cases') {
-            steps {
-                echo 'Test Cases'
-            }
-        }
-
-        stage('Publish A Release') {
-            steps {
-                echo 'Publish A Release'
-            }
+def call() {
+    if (!env.SONAR_OPTS) {
+        env.SONAR_OPTS = ""
+    }
+    node {
+        common.checkout()
+        common.codeQuality()
+        common.testCases("python")
+        if(env.TAG_NAME ==~ ".*") {
+            common.release("python")
         }
     }
 }

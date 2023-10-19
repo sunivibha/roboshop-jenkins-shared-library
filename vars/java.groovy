@@ -1,24 +1,18 @@
-pipeline {
-    agent any
-
-    stages {
-
-        stage('Code Quality') {
-            steps {
-                echo 'Code Quality'
+def call() {
+    if (!env.SONAR_OPTS) {
+        env.SONAR_OPTS = ""
+    }
+    node {
+        try {
+            common.checkout()
+            common.compile("java")
+            common.codeQuality()
+            common.testCases("java")
+            if(env.TAG_NAME ==~ ".*") {
+                common.release("java")
             }
-        }
-
-        stage('Test Cases') {
-            steps {
-                echo 'Test Cases'
-            }
-        }
-
-        stage('Publish A Release') {
-            steps {
-                echo 'Publish A Release'
-            }
+        } catch (e) {
+            common.mail()
         }
     }
 }

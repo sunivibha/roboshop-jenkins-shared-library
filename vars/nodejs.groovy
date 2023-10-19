@@ -1,28 +1,17 @@
 def call() {
-    pipeline{
-        agent any
-
-        stages {
-
-            stage('Code Quality') {
-                steps {
-                    echo 'Code Quality'
-                }
+    if (!env.SONAR_OPTS) {
+        env.SONAR_OPTS = ""
+    }
+    node {
+        try {
+            common.checkout()
+            common.codeQuality()
+            common.testCases("nodejs")
+            if(env.TAG_NAME ==~ ".*") {
+                common.release("nodejs")
             }
-
-            stage('Test Cases') {
-                steps {
-                    echo 'Test Cases'
-                }
-            }
-
-            stage('Publish A Release') {
-                steps {
-                    echo 'Publish A Release'
-                }
-            }
-
+        } catch (e) {
+            common.mail()
         }
-
     }
 }
